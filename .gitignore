@@ -3,3 +3,7 @@
 ################################################################################
 
 /AutomationWithCSharp/.vs/AutomationWithCSharp/v15
+/AutomationWithCSharp/obj/Debug
+/Automation/bin/Debug
+/Automation/obj/Debug
+/AutomationWithCSharp/packages
