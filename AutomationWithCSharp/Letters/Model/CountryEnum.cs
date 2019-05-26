@@ -1,6 +1,6 @@
 ﻿namespace AutomationWithCSharp.Letters.Model
 {
-    public enum CountryEnum
+    public enum Country
     {
         Argentina
     }
