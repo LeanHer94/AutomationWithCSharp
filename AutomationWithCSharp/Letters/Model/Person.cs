@@ -11,6 +11,7 @@ namespace AutomationWithCSharp.Letters.Model
         public string Name { get; set; }
         public User PlatformUser { get; set; }
         public IEnumerable<Person> Relatives { get; set; }
+        public ICollection<Letter> ReceivedLetters { get; set; } = new List<Letter>();
         public string Surname { get; set; }
     }
 }

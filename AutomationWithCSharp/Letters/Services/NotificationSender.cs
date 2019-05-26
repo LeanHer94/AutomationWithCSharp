@@ -1,5 +1,6 @@
 ﻿using AutomationWithCSharp.Letters.Model;
 using AutomationWithCSharp.Letters.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace AutomationWithCSharp.Letters.Services
@@ -8,7 +9,8 @@ namespace AutomationWithCSharp.Letters.Services
     {
         public void Send(string notification, IEnumerable<Person> receivers)
         {
-            throw new System.NotImplementedException();
+            Console.WriteLine("Your son is not older enough to send letters.");
+            Console.ReadKey();
         }
     }
 }

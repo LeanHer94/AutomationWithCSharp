@@ -4,11 +4,20 @@ namespace AutomationWithCSharp.Letters.Services
 {
     public class BadWordsValidator : IBadWordsValidator
     {
-        public string[] WordsToAvoid { get; } = new string[1];
+        public readonly string[] WordsToAvoid = new string[] {
+            "shit"
+        };
 
         public bool ThereAreNotBadWords(string textToLookOn)
         {
-            throw new System.NotImplementedException();
+            foreach (var wordToAvoid in WordsToAvoid)
+            {
+                if (textToLookOn.Contains(wordToAvoid))
+                {
+                    return false;
+                };
+            }
+            return true;
         }
     }
 }

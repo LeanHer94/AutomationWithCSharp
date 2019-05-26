@@ -4,18 +4,21 @@ using System.Collections.Generic;
 
 namespace AutomationWithCSharp.Letters.Services
 {
-    public class LettersDispatcher
+    public class LettersDispatcher : ILettersDispatcher
     {
         private readonly IAgeValidator ageValidator;
         private readonly IBadWordsValidator badWordsValidator;
         private readonly INotificationSender notificationSender;
 
 
-        public LettersDispatcher()
+        public LettersDispatcher(
+            IAgeValidator ageValidator,
+            IBadWordsValidator badWordsValidator,
+            INotificationSender notificationSender)
         {
-            this.ageValidator = new AgeValidator();
-            this.badWordsValidator = new BadWordsValidator();
-            this.notificationSender = new NotificationSender();
+            this.ageValidator = ageValidator;
+            this.badWordsValidator = badWordsValidator;
+            this.notificationSender = notificationSender;
         }
 
         public void Dispatch(IEnumerable<Letter> letters)
@@ -30,6 +33,10 @@ namespace AutomationWithCSharp.Letters.Services
                 if (this.badWordsValidator.ThereAreNotBadWords(letter.Body))
                 {
                     //send
+                    foreach (var receiver in letter.Receivers)
+                    {
+                        receiver.ReceivedLetters.Add(letter);
+                    }
                 }
             }
         }

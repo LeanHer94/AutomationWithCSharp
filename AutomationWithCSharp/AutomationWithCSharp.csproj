@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Letters\LeandroInjections.cs" />
     <Compile Include="Letters\Model\CountryEnum.cs" />
     <Compile Include="Letters\Model\Letter.cs" />
     <Compile Include="Letters\Model\Person.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="Letters\Services\BadWordsValidator.cs" />
     <Compile Include="Letters\Services\Interfaces\IAgeValidator.cs" />
     <Compile Include="Letters\Services\Interfaces\IBadWordsValidator.cs" />
+    <Compile Include="Letters\Services\Interfaces\ILettersDispatcher.cs" />
     <Compile Include="Letters\Services\Interfaces\INotificationSender.cs" />
     <Compile Include="Letters\Services\LettersDispatcher.cs" />
     <Compile Include="Letters\Services\NotificationSender.cs" />
