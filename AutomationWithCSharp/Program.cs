@@ -1,21 +1,32 @@
-using System;
+using AutomationWithCSharp.Letters.Model;
+using AutomationWithCSharp.Letters.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomationWithCSharp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            var people = PeopleInitializer.Init();
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+            var letters = new List<Letter>();
+
+            people.ForEach(x =>
+            {
+                letters.Add(new Letter
+                    {
+                        Title = "Letter 1",
+                        Body = "shit dont like this letter. Shouldn't pass my validator",
+                        Sender = x,
+                        Receivers = people.Where(y => y.Id != x.Id)
+                    });
+            });
+
+            var dispatcher = new LettersDispatcher();
+
+            dispatcher.Dispatch(letters);
         }
     }
 }

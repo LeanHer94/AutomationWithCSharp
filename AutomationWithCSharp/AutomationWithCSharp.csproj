@@ -43,15 +43,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Letters\Model\CountryEnum.cs" />
+    <Compile Include="Letters\Model\Letter.cs" />
+    <Compile Include="Letters\Model\Person.cs" />
     <Compile Include="Letters\Model\User.cs" />
+    <Compile Include="Letters\Services\AgeValidator.cs" />
+    <Compile Include="Letters\Services\BadWordsValidator.cs" />
+    <Compile Include="Letters\Services\Interfaces\IAgeValidator.cs" />
+    <Compile Include="Letters\Services\Interfaces\IBadWordsValidator.cs" />
+    <Compile Include="Letters\Services\Interfaces\INotificationSender.cs" />
+    <Compile Include="Letters\Services\LettersDispatcher.cs" />
+    <Compile Include="Letters\Services\NotificationSender.cs" />
+    <Compile Include="Letters\Services\PeopleInitializer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Letters\Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
