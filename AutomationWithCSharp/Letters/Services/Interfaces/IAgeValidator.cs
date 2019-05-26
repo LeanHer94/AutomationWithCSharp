@@ -4,6 +4,6 @@ namespace AutomationWithCSharp.Letters.Services.Interfaces
 {
     public interface IAgeValidator
     {
-        bool IsOlderEnough(Person guy);
+        bool IsNotOlderEnough(Person guy);
     }
 }

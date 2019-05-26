@@ -2,6 +2,6 @@
 {
     public interface IBadWordsValidator
     {
-        bool AreThereBadWords(string textToLookOn);
+        bool ThereAreNotBadWords(string textToLookOn);
     }
 }
