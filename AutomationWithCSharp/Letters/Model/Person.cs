@@ -4,6 +4,7 @@ namespace AutomationWithCSharp.Letters.Model
 {
     public class Person
     {
+        public int Id { get; set; }
         public int Age { get; set; }
         public Country Country { get; set; }
         public string Email { get; set; }
