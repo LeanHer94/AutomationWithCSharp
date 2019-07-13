@@ -5,11 +5,11 @@ namespace AutomationWithCSharp.Letters.Services
 {
     public class AgeValidator : IAgeValidator
     {
-        public int MinimunAgeToSendLetters { get; } = 18;
+        public const int MinimunAgeToSendLetters = 18;
 
         public bool IsNotOlderEnough(Person guy)
         {
-            return guy.Age < this.MinimunAgeToSendLetters;
+            return guy.Age < MinimunAgeToSendLetters;
         }
     }
 }

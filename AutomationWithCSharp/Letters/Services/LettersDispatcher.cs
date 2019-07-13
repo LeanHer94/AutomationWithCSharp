@@ -27,7 +27,9 @@ namespace AutomationWithCSharp.Letters.Services
             {
                 if (this.ageValidator.IsNotOlderEnough(letter.Sender))
                 {
-                    this.notificationSender.Send("", letter.Sender.Relatives);
+                    this.notificationSender.Send("Your son is not older enough to send letters", letter.Sender.Relatives);
+
+                    continue;
                 }
 
                 if (this.badWordsValidator.ThereAreNotBadWords(letter.Body))

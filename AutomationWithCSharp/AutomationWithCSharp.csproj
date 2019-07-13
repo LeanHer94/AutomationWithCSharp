@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Letters\LeandroInjections.cs" />
+    <Compile Include="Letters\InjectionsConfigurator.cs" />
     <Compile Include="Letters\Model\CountryEnum.cs" />
     <Compile Include="Letters\Model\Letter.cs" />
     <Compile Include="Letters\Model\Person.cs" />

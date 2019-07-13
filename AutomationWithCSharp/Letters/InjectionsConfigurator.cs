@@ -3,7 +3,7 @@ using AutomationWithCSharp.Letters.Services.Interfaces;
 
 namespace AutomationWithCSharp.Letters
 {
-    public class LeandroInjections
+    public class InjectionsConfigurator
     {
         public IAgeValidator AgeValidator;
         public IBadWordsValidator BadWordsValidator;

@@ -10,7 +10,7 @@ namespace AutomationWithCSharp
     {
         private static void Main(string[] args)
         {
-            var injectors = new LeandroInjections();
+            var injectors = new InjectionsConfigurator();
             injectors.Configure();
 
             var people = PeopleInitializer.Init();
