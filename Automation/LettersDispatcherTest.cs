@@ -29,6 +29,11 @@ namespace Automation
         }
 
         [Fact]
+        public void Should_NotSendLetters_When_ThereAreNot()
+        {
+        }
+
+        [Fact]
         public void Should_NotSendLetter_When_SenderIsNotOlderEnough()
         {
             //Setup
@@ -36,18 +41,28 @@ namespace Automation
             {
                 Age = AgeValidator.MinimunAgeToSendLetters - 1
             };
+
             var personOlderEnough = new Person
             {
                 Age = AgeValidator.MinimunAgeToSendLetters + 1
+            };
+
+            var receiver = new Person
+            {
             };
 
             var letterShouldNotBeSend = new Letter
             {
                 Sender = personNotOlderEnough
             };
+
             var letterShouldBeSend = new Letter
             {
                 Sender = personOlderEnough,
+                Receivers = new List<Person>
+                {
+                    receiver
+                },
                 Body = "a body text"
             };
 
@@ -65,13 +80,22 @@ namespace Automation
                 .Setup(x => x.IsNotOlderEnough(personOlderEnough))
                 .Returns(false);
 
+            this.badWordsValidator
+                .Setup(x => x.ThereAreNotBadWords(letterShouldBeSend.Body))
+                .Returns(true);
+
             //Act
             this.lettersDispatcher.Dispatch(letters);
 
             //Result
+            var expectedLettersSent = new List<Letter>
+            {
+                letterShouldBeSend
+            };
+
             this.ageValidator.Verify(
                 x => x.IsNotOlderEnough(
-                    It.Is<Person>(y => y.Equals(personNotOlderEnough))), 
+                    It.Is<Person>(y => y.Equals(personNotOlderEnough))),
                 Times.Once);
 
             this.ageValidator.Verify(
@@ -81,8 +105,25 @@ namespace Automation
 
             this.badWordsValidator.Verify(
                 x => x.ThereAreNotBadWords(
-                    It.Is<string>(y => y == letterShouldBeSend.Body)), 
+                    It.Is<string>(y => y == letterShouldBeSend.Body)),
                 Times.Once);
+
+            receiver.ReceivedLetters.Should().BeEquivalentTo(expectedLettersSent);
+        }
+
+        [Fact]
+        public void Should_NotifyToTheSenderFamily_When_SenderIsNotOlderEnough()
+        {
+        }
+
+        [Fact]
+        public void Should_NotSendLetter_When_TheBodyOfItHasBadWords()
+        {
+        }
+
+        [Fact]
+        public void Should_SendLetterToReceivers_When_AllValidationsPass()
+        {
         }
     }
 }
