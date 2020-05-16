@@ -41,8 +41,8 @@ namespace Automation
             var receiver = new Person();
 
             // Don't actually care about the age of the person as the age validator
-            //   is not part of the SUT and it is mocked
-            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
+            //   is not under test and it is mocked
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
             this.ageValidator
                 .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
@@ -66,13 +66,11 @@ namespace Automation
             // Arrange 
             var receiver = new Person();
 
-            // Don't actually care about the age of the person as the age validator
-            //   is not part of the SUT and it is mocked
-            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some message" } }; 
 
             this.ageValidator
                 .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
-                .Returns(true);
+                .Returns(false);
 
             this.badWordsValidator
                 .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
@@ -88,6 +86,24 @@ namespace Automation
         [Fact]
         public void Should_SendLetterToReceivers_When_AllValidationsPass()
         {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message"  } }; 
+
+            this.ageValidator
+                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
+                .Returns(false);
+
+            this.badWordsValidator
+                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
+                .Returns(true); 
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(1);
         }
     }
 }
