@@ -35,6 +35,21 @@ namespace Automation
                 .Returns(senderIsMinor);
         }
 
+        protected void SetupLanguageValidator(bool cleanSpeach)
+        {
+            this.badWordsValidator
+                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
+                .Returns(cleanSpeach); 
+        }
+
+        protected void BadWords () { SetupLanguageValidator(cleanSpeach:false); }
+
+        protected void NoBadWords () { SetupLanguageValidator(cleanSpeach:true); }
+
+        protected void MinorSender () { SetupAgeValidator(senderIsMinor:true);  }
+
+        protected void AdultSender () { SetupAgeValidator(senderIsMinor:false); }
+
         [Fact]
         public void Should_NotSendLetter_When_SenderIsNotOlderEnough()
         {
@@ -45,7 +60,7 @@ namespace Automation
             //   is not under test and it is mocked
             var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
-            SetupAgeValidator(senderIsMinor: true);
+            MinorSender();
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
@@ -68,7 +83,7 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person { Relatives = family }, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
-            SetupAgeValidator(senderIsMinor: true);
+            MinorSender();
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
@@ -86,11 +101,9 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some message" } }; 
 
-            SetupAgeValidator(senderIsMinor:false);
+            AdultSender();
 
-            this.badWordsValidator
-                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
-                .Returns(false); 
+            BadWords();
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
@@ -107,11 +120,9 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message"  } }; 
 
-            SetupAgeValidator(senderIsMinor:false);
+            AdultSender();
 
-            this.badWordsValidator
-                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
-                .Returns(true); 
+            NoBadWords();
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
@@ -128,11 +139,9 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
 
-            SetupAgeValidator(senderIsMinor:false);
+            AdultSender();
 
-            this.badWordsValidator
-                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
-                .Returns(true); 
+            NoBadWords();
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
@@ -149,11 +158,9 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body="A message" } }; 
 
-            SetupAgeValidator(senderIsMinor:false);
+            AdultSender();
 
-            this.badWordsValidator
-                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
-                .Returns(true); 
+            NoBadWords();
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
