@@ -119,5 +119,26 @@ namespace Automation
             // Assert
             receiver.ReceivedLetters.Should().HaveCount(1); // Input drives output. No need for exact equality test.
         }
+
+        [Fact]
+        public void Should_SendLetterToReceivers_When_ThereIsNoMessage()
+        {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
+
+            SetupAgeValidator(senderIsMinor:false);
+
+            this.badWordsValidator
+                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
+                .Returns(true); 
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
+        }
     }
 }
