@@ -43,7 +43,7 @@ namespace Automation
 
             // Don't actually care about the age of the person as the age validator
             //   is not under test and it is mocked
-            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
             SetupAgeValidator(senderIsMinor: true);
 
@@ -66,7 +66,7 @@ namespace Automation
 
             var family = new List<Person>{mom};
 
-            var letters = new List<Letter> { new Letter { Sender = new Person { Relatives = family }, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person { Relatives = family }, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
             SetupAgeValidator(senderIsMinor: true);
 
@@ -84,7 +84,7 @@ namespace Automation
             // Arrange 
             var receiver = new Person();
 
-            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some message" } }; 
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some message" } }; 
 
             SetupAgeValidator(senderIsMinor:false);
 
@@ -105,7 +105,7 @@ namespace Automation
             // Arrange 
             var receiver = new Person();
 
-            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message"  } }; 
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message"  } }; 
 
             SetupAgeValidator(senderIsMinor:false);
 
@@ -126,7 +126,7 @@ namespace Automation
             // Arrange 
             var receiver = new Person();
 
-            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
 
             SetupAgeValidator(senderIsMinor:false);
 

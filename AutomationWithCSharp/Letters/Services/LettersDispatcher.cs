@@ -25,9 +25,19 @@ namespace AutomationWithCSharp.Letters.Services
         {
             foreach (var letter in letters)
             {
+                // NOTE: Look down. Might be a good opportunity to introduce chain of responsibility pattern,
+                //  or maybe list a list of Func<bool>
+
                 if (string.IsNullOrEmpty(letter.Body))
                 {
                    // TODO: Introduce a notifier that warns the sender against empty message.
+                    
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(letter.Title))
+                {
+                   // TODO: Introduce a notifier that warns the sender against no subject.
                     
                     continue;
                 }
