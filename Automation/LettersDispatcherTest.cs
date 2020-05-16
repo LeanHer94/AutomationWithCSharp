@@ -140,5 +140,26 @@ namespace Automation
             // Assert
             receiver.ReceivedLetters.Should().HaveCount(0);
         }
+
+        [Fact]
+        public void Should_SendLetterToReceivers_When_ThereIsNoSubject()
+        {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body="A message" } }; 
+
+            SetupAgeValidator(senderIsMinor:false);
+
+            this.badWordsValidator
+                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
+                .Returns(true); 
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
+        }
     }
 }
