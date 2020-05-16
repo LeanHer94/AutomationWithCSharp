@@ -25,20 +25,31 @@ namespace AutomationWithCSharp.Letters.Services
         {
             foreach (var letter in letters)
             {
+                if (string.IsNullOrEmpty(letter.Body))
+                {
+                   // TODO: Introduce a notifier that warns the sender against empty message.
+                    
+                    continue;
+                }
+
                 if (this.ageValidator.IsNotOlderEnough(letter.Sender))
                 {
                     this.notificationSender.Send("Your son is not older enough to send letters", letter.Sender.Relatives);
 
+                    continue; // Good call avoiding cyclomatic complexity.
+                }
+
+                if (!this.badWordsValidator.ThereAreNotBadWords(letter.Body))
+                {
+                    // TODO: Introduce a notifier that warns the sender against the usage of inappropriate language.
+                    
                     continue;
                 }
 
-                if (this.badWordsValidator.ThereAreNotBadWords(letter.Body))
+                //send
+                foreach (var receiver in letter.Receivers)
                 {
-                    //send
-                    foreach (var receiver in letter.Receivers)
-                    {
-                        receiver.ReceivedLetters.Add(letter);
-                    }
+                    receiver.ReceivedLetters.Add(letter);
                 }
             }
         }
