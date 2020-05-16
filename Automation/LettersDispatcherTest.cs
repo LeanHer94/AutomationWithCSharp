@@ -36,79 +36,22 @@ namespace Automation
         [Fact]
         public void Should_NotSendLetter_When_SenderIsNotOlderEnough()
         {
-            //Setup
-            var personNotOlderEnough = new Person
-            {
-                Age = AgeValidator.MinimunAgeToSendLetters - 1
-            };
+            // Arrange 
+            var receiver = new Person();
 
-            var personOlderEnough = new Person
-            {
-                Age = AgeValidator.MinimunAgeToSendLetters + 1
-            };
-
-            var receiver = new Person
-            {
-            };
-
-            var letterShouldNotBeSend = new Letter
-            {
-                Sender = personNotOlderEnough
-            };
-
-            var letterShouldBeSend = new Letter
-            {
-                Sender = personOlderEnough,
-                Receivers = new List<Person>
-                {
-                    receiver
-                },
-                Body = "a body text"
-            };
-
-            var letters = new List<Letter>
-            {
-                letterShouldNotBeSend,
-                letterShouldBeSend
-            };
+            // Don't actually care about the age of the person as the age validator
+            //   is not part of the SUT and it is mocked
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
 
             this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(personNotOlderEnough))
-                .Returns(true);
-
-            this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(personOlderEnough))
+                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
                 .Returns(false);
 
-            this.badWordsValidator
-                .Setup(x => x.ThereAreNotBadWords(letterShouldBeSend.Body))
-                .Returns(true);
-
-            //Act
+            // Act
             this.lettersDispatcher.Dispatch(letters);
 
-            //Result
-            var expectedLettersSent = new List<Letter>
-            {
-                letterShouldBeSend
-            };
-
-            this.ageValidator.Verify(
-                x => x.IsNotOlderEnough(
-                    It.Is<Person>(y => y.Equals(personNotOlderEnough))),
-                Times.Once);
-
-            this.ageValidator.Verify(
-                x => x.IsNotOlderEnough(
-                    It.Is<Person>(y => y.Equals(personOlderEnough))),
-                Times.Once);
-
-            this.badWordsValidator.Verify(
-                x => x.ThereAreNotBadWords(
-                    It.Is<string>(y => y == letterShouldBeSend.Body)),
-                Times.Once);
-
-            receiver.ReceivedLetters.Should().BeEquivalentTo(expectedLettersSent);
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
         }
 
         [Fact]
