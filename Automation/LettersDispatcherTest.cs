@@ -32,13 +32,7 @@ namespace Automation
         {
             this.ageValidator
                 .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
-                .Returns(!senderIsMinor);
-        }
-
-        [Fact]
-        public void Should_NotSendLetters_When_ThereAreNot()
-        {
-            
+                .Returns(senderIsMinor);
         }
 
         [Fact]
@@ -51,9 +45,7 @@ namespace Automation
             //   is not under test and it is mocked
             var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
-            this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
-                .Returns(false);
+            SetupAgeValidator(senderIsMinor: true);
 
             // Act
             this.lettersDispatcher.Dispatch(letters);
@@ -65,6 +57,25 @@ namespace Automation
         [Fact]
         public void Should_NotifyToTheSenderFamily_When_SenderIsNotOlderEnough()
         {
+            // Arrange 
+            var receiver = new Person();
+
+            var momName = "Liz";
+
+            var mom = new Person{ Name=momName };
+
+            var family = new List<Person>{mom};
+
+            var letters = new List<Letter> { new Letter { Sender = new Person { Relatives = family }, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
+
+            SetupAgeValidator(senderIsMinor: true);
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            // NOTE: This is kind of a slippery slope. This test uses reference equality since Person doesn't implement Equals.
+            notificationSender.Verify(n => n.Send(It.IsAny<string>(), family), Times.AtLeastOnce());
         }
 
         [Fact]
@@ -75,9 +86,7 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some message" } }; 
 
-            this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
-                .Returns(false);
+            SetupAgeValidator(senderIsMinor:false);
 
             this.badWordsValidator
                 .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
@@ -98,9 +107,7 @@ namespace Automation
 
             var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message"  } }; 
 
-            this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
-                .Returns(false);
+            SetupAgeValidator(senderIsMinor:false);
 
             this.badWordsValidator
                 .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>())) // No need for an exact match. Don't over constrain.
@@ -110,7 +117,7 @@ namespace Automation
             this.lettersDispatcher.Dispatch(letters);
 
             // Assert
-            receiver.ReceivedLetters.Should().HaveCount(1);
+            receiver.ReceivedLetters.Should().HaveCount(1); // Input drives output. No need for exact equality test.
         }
     }
 }
