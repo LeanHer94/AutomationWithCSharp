@@ -28,6 +28,13 @@ namespace Automation
                 this.notificationSender.Object);
         }
 
+        protected void SetupAgeValidator(bool senderIsMinor)
+        {
+            this.ageValidator
+                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>())) // No need for an exact match. Don't over constrain.
+                .Returns(!senderIsMinor);
+        }
+
         [Fact]
         public void Should_NotSendLetters_When_ThereAreNot()
         {
