@@ -28,102 +28,142 @@ namespace Automation
                 this.notificationSender.Object);
         }
 
-        [Fact]
-        public void Should_NotSendLetters_When_ThereAreNot()
+        protected void SetupAgeValidator(bool senderIsMinor)
         {
+            this.ageValidator
+                .Setup(x => x.IsNotOlderEnough(It.IsAny<Person>()))
+                .Returns(senderIsMinor);
         }
+
+        protected void SetupLanguageValidator(bool cleanSpeach)
+        {
+            this.badWordsValidator
+                .Setup(x => x.ThereAreNotBadWords(It.IsAny<string>()))
+                .Returns(cleanSpeach); 
+        }
+
+        protected void BadWords () { SetupLanguageValidator(cleanSpeach:false); }
+
+        protected void NoBadWords () { SetupLanguageValidator(cleanSpeach:true); }
+
+        protected void MinorSender () { SetupAgeValidator(senderIsMinor:true);  }
+
+        protected void AdultSender () { SetupAgeValidator(senderIsMinor:false); }
 
         [Fact]
         public void Should_NotSendLetter_When_SenderIsNotOlderEnough()
         {
-            //Setup
-            var personNotOlderEnough = new Person
-            {
-                Age = AgeValidator.MinimunAgeToSendLetters - 1
-            };
+            // Arrange 
+            var receiver = new Person();
 
-            var personOlderEnough = new Person
-            {
-                Age = AgeValidator.MinimunAgeToSendLetters + 1
-            };
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
 
-            var receiver = new Person
-            {
-            };
+            MinorSender();
 
-            var letterShouldNotBeSend = new Letter
-            {
-                Sender = personNotOlderEnough
-            };
-
-            var letterShouldBeSend = new Letter
-            {
-                Sender = personOlderEnough,
-                Receivers = new List<Person>
-                {
-                    receiver
-                },
-                Body = "a body text"
-            };
-
-            var letters = new List<Letter>
-            {
-                letterShouldNotBeSend,
-                letterShouldBeSend
-            };
-
-            this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(personNotOlderEnough))
-                .Returns(true);
-
-            this.ageValidator
-                .Setup(x => x.IsNotOlderEnough(personOlderEnough))
-                .Returns(false);
-
-            this.badWordsValidator
-                .Setup(x => x.ThereAreNotBadWords(letterShouldBeSend.Body))
-                .Returns(true);
-
-            //Act
+            // Act
             this.lettersDispatcher.Dispatch(letters);
 
-            //Result
-            var expectedLettersSent = new List<Letter>
-            {
-                letterShouldBeSend
-            };
-
-            this.ageValidator.Verify(
-                x => x.IsNotOlderEnough(
-                    It.Is<Person>(y => y.Equals(personNotOlderEnough))),
-                Times.Once);
-
-            this.ageValidator.Verify(
-                x => x.IsNotOlderEnough(
-                    It.Is<Person>(y => y.Equals(personOlderEnough))),
-                Times.Once);
-
-            this.badWordsValidator.Verify(
-                x => x.ThereAreNotBadWords(
-                    It.Is<string>(y => y == letterShouldBeSend.Body)),
-                Times.Once);
-
-            receiver.ReceivedLetters.Should().BeEquivalentTo(expectedLettersSent);
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
         }
 
         [Fact]
         public void Should_NotifyToTheSenderFamily_When_SenderIsNotOlderEnough()
         {
+            // Arrange 
+            var receiver = new Person();
+
+            var momName = "Liz";
+
+            var mom = new Person{ Name=momName };
+
+            var family = new List<Person>{mom};
+
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person { Relatives = family }, Receivers = new List<Person>{ receiver }, Body = "Some Message" } }; 
+
+            MinorSender();
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            notificationSender.Verify(n => n.Send(It.IsAny<string>(), family), Times.AtLeastOnce());
         }
 
         [Fact]
         public void Should_NotSendLetter_When_TheBodyOfItHasBadWords()
         {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some message" } }; 
+
+            AdultSender();
+
+            BadWords();
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
         }
 
         [Fact]
         public void Should_SendLetterToReceivers_When_AllValidationsPass()
         {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body = "Some Message"  } }; 
+
+            AdultSender();
+
+            NoBadWords();
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void Should_NotSendLetterToReceivers_When_ThereIsNoMessage()
+        {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Title="A message", Sender = new Person {}, Receivers = new List<Person>{ receiver } } }; 
+
+            AdultSender();
+
+            NoBadWords();
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public void Should_NotSendLetterToReceivers_When_ThereIsNoSubject()
+        {
+            // Arrange 
+            var receiver = new Person();
+
+            var letters = new List<Letter> { new Letter { Sender = new Person {}, Receivers = new List<Person>{ receiver }, Body="A message" } }; 
+
+            AdultSender();
+
+            NoBadWords();
+
+            // Act
+            this.lettersDispatcher.Dispatch(letters);
+
+            // Assert
+            receiver.ReceivedLetters.Should().HaveCount(0);
         }
     }
 }
