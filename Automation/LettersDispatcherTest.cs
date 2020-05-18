@@ -132,7 +132,7 @@ namespace Automation
         }
 
         [Fact]
-        public void Should_SendLetterToReceivers_When_ThereIsNoMessage()
+        public void Should_NotSendLetterToReceivers_When_ThereIsNoMessage()
         {
             // Arrange 
             var receiver = new Person();
@@ -151,7 +151,7 @@ namespace Automation
         }
 
         [Fact]
-        public void Should_SendLetterToReceivers_When_ThereIsNoSubject()
+        public void Should_NotSendLetterToReceivers_When_ThereIsNoSubject()
         {
             // Arrange 
             var receiver = new Person();
