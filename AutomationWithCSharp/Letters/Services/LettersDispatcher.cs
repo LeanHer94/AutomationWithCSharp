@@ -46,7 +46,7 @@ namespace AutomationWithCSharp.Letters.Services
                 {
                     this.notificationSender.Send("Your son is not older enough to send letters", letter.Sender.Relatives);
 
-                    continue; // Good call avoiding cyclomatic complexity.
+                    continue;
                 }
 
                 if (!this.badWordsValidator.ThereAreNotBadWords(letter.Body))
